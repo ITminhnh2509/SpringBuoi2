@@ -3,15 +3,24 @@ package com.example.thu2_springio.service;
 import com.example.thu2_springio.dto.StudentDTO;
 import com.example.thu2_springio.model.Student;
 import com.example.thu2_springio.repository.StudentRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 @Service
+@RequiredArgsConstructor
 public class StudentService implements ServiceBasic{
 
-    @Autowired
-    StudentRepository repository;
+    private final StudentRepository repository;
+
+    @Override
+    public Page<Student> getStudents(Pageable pageable) {
+        return repository.findAll(pageable);
+    }
+
     @Override
     public List<Student> getallStudent() {
         return repository.findAll();
@@ -50,5 +59,15 @@ public class StudentService implements ServiceBasic{
     @Override
     public void removeStudent(Long id) {
     repository.deleteById(id);
+    }
+
+    @Override
+    public List<Student> fingByThanhPho(String ThanhPho) {
+        return repository.findByThanhPho(ThanhPho);
+    }
+
+    @Override
+    public List<Student> fingByThanhPhoOrTen(String ThanhPhoOrTen) {
+        return repository.findByThanhPhoAndTen(ThanhPhoOrTen);
     }
 }

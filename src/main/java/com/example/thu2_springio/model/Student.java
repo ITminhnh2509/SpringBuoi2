@@ -23,5 +23,5 @@ public class Student extends BaseEntity {
     private String ten;
     private String thanhPho;
     private LocalDate ngaySinh;
-    private XepLoai xepLoai;
+    private String xepLoai;
 }

@@ -9,5 +9,12 @@ public enum XepLoai {
     public String getXl() {
         return xl;
     }
-
+    public static String fromString(String xl){
+        for (XepLoai xepLoai : XepLoai.values()) {
+            if(xepLoai.xl.equalsIgnoreCase(xl)){
+                return xl;
+            }
+        }
+        throw new IllegalArgumentException("Xep loai not found: " + xl);
+    }
 }

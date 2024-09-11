@@ -120,14 +120,20 @@ public class StudentController {
         if(student == null){
             ApiResponse apiResponse = ApiResponse
                     .builder()
-                    .data(null)
+                    .data(id)
                     .message("Student not found")
                     .status(HttpStatus.NOT_FOUND.value())
                     .build();
             return ResponseEntity.badRequest().body(apiResponse);
         }
         service.removeStudent(id);
-        return ResponseEntity.ok("delete student with id: " + id);
+        ApiResponse apiResponse = ApiResponse
+                .builder()
+                .data(id)
+                .message("delete successfully")
+                .status(HttpStatus.OK.value())
+                .build();
+        return ResponseEntity.ok(apiResponse);
     }
 
     @GetMapping("/get")
@@ -142,6 +148,7 @@ public class StudentController {
                     .build();
             return ResponseEntity.badRequest().body(apiResponse);
         }
+
         return ResponseEntity.ok().body(students);
     }
 }

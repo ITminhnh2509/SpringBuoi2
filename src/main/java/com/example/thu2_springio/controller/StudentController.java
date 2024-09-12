@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -151,4 +152,43 @@ public class StudentController {
 
         return ResponseEntity.ok().body(students);
     }
+
+    @GetMapping("/getbynamsinh")
+    public ResponseEntity<?> getStudentByNamSinh(@RequestParam("namSinh1") int namSinh1, @RequestParam("namsinh2") int namsinh2) {
+        List<Student> students = service.findByNgaySinhBetween(namSinh1, namsinh2);
+        if (students.isEmpty()) {
+            ApiResponse apiResponse = ApiResponse.builder()
+                    .data(null)
+                    .message("No data found")
+                    .status(HttpStatus.NOT_FOUND.value())
+                    .build();
+            return ResponseEntity.badRequest().body(apiResponse);
+        }
+        ApiResponse apiResponse = ApiResponse.builder()
+                .data(students)
+                .message("Data found")
+                .status(HttpStatus.OK.value())
+                .build();
+        return ResponseEntity.ok().body(apiResponse);
+    }
+    @GetMapping("/getbyxeploai")
+    public ResponseEntity<?> getStudentByXepLoai(@RequestParam("xepLoai") XepLoai xepLoai) {
+        List<Student> students = service.findByXepLoai(xepLoai);
+        if (students.isEmpty()) {
+            ApiResponse apiResponse = ApiResponse.builder()
+                    .data(null)
+                    .message("No data found")
+                    .status(HttpStatus.NOT_FOUND.value())
+                    .build();
+            return ResponseEntity.badRequest().body(apiResponse);
+        }
+        ApiResponse apiResponse = ApiResponse.builder()
+                .data(students)
+                .message("Data found")
+                .status(HttpStatus.OK.value())
+                .build();
+        return ResponseEntity.ok().body(apiResponse);
+    }
+
+
 }

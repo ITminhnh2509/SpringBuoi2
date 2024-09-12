@@ -2,13 +2,16 @@ package com.example.thu2_springio.service;
 
 import com.example.thu2_springio.dto.StudentDTO;
 import com.example.thu2_springio.model.Student;
+import com.example.thu2_springio.model.XepLoai;
 import com.example.thu2_springio.repository.StudentRepository;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 @Service
 @RequiredArgsConstructor
@@ -70,4 +73,18 @@ public class StudentService implements ServiceBasic{
     public List<Student> fingByThanhPhoOrTen(String ThanhPhoOrTen) {
         return repository.findByThanhPhoAndTen(ThanhPhoOrTen);
     }
+
+
+
+    @Override
+    public List<Student> findByNgaySinhBetween(int year1, int year2) {
+        return repository.findByNgaySinhBetween(year1, year2);
+    }
+
+    @Override
+    public List<Student> findByXepLoai(XepLoai XepLoai) {
+        return repository.findByXepLoai(XepLoai);
+    }
+
+
 }

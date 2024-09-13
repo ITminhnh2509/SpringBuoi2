@@ -23,5 +23,6 @@ public class Student extends BaseEntity {
     private String ten;
     private String thanhPho;
     private LocalDate ngaySinh;
-    private String xepLoai;
+    @Enumerated(EnumType.STRING)
+    private XepLoai xepLoai;
 }

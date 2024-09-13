@@ -86,5 +86,10 @@ public class StudentService implements ServiceBasic{
         return repository.findByXepLoai(XepLoai);
     }
 
+    @Override
+    public List<Student> searchStudents(XepLoai xepLoai, String ten, String thanhPho, int startYear, int endYear) {
+        return repository.search(xepLoai, ten, thanhPho, startYear, endYear);
+    }
+
 
 }

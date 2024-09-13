@@ -13,7 +13,7 @@ public class StudentResponse extends BaseResponse {
     private String ten;
     private String thanhPho;
     private LocalDate ngaySinh;
-    private String xepLoai;
+    private XepLoai xepLoai;
 
     public static StudentResponse fromStudent(Student student){
          StudentResponse studentReponse=  StudentResponse.builder()

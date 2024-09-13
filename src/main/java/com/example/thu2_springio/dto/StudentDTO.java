@@ -1,6 +1,8 @@
 package com.example.thu2_springio.dto;
 
 import com.example.thu2_springio.model.XepLoai;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -21,6 +23,8 @@ public class StudentDTO {
     @DateTimeFormat(pattern = "dd/MM/yyyy")
 
     private LocalDate ngaySinh;
-    @NotNull(message = "Không được để trống xep loại")
-    private String xepLoai;
+
+    @NotNull(message = "Xếp loại không được để trống")
+    @Enumerated(EnumType.STRING)
+    private XepLoai xepLoai;
 }

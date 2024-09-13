@@ -28,5 +28,9 @@ public interface ServiceBasic {
     List<Student> findByNgaySinhBetween(int year1, int year2);
 
     List<Student> findByXepLoai(XepLoai XepLoai);
+    List<Student> searchStudents(
+            XepLoai xepLoai, String ten, String thanhPho,
+            int startYear,int endYear
+    );
 }
 

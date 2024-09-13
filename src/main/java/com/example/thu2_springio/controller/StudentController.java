@@ -189,6 +189,20 @@ public class StudentController {
                 .build();
         return ResponseEntity.ok().body(apiResponse);
     }
-
+    @GetMapping("/search")
+    public ResponseEntity<?> searchStudent(
+            @RequestParam(value = "xepLoai", required = false) XepLoai xepLoai,
+            @RequestParam(value = "ten", required = false) String ten,
+            @RequestParam(value = "thanhPho", required = false) String thanhPho,
+            @RequestParam(value = "startYear", required = false) int startYear,
+            @RequestParam(value = "endYear", required = false) int endYear
+    ){
+        ApiResponse apiResponse = ApiResponse.builder()
+                .data(service.searchStudents(xepLoai, ten,thanhPho,startYear,endYear))
+                .message("search successful")
+                .status(HttpStatus.OK.value())
+                .build();
+        return ResponseEntity.ok().body(apiResponse);
+    }
 
 }

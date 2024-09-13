@@ -6,13 +6,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Date;
 import java.util.List;
 
 public interface StudentRepository extends JpaRepository<Student, Long> {
     Page<Student> findAll(Pageable pageable);
-
+    List<Student> findByXepLoai(XepLoai xepLoai);
     List<Student> findByTenContainingIgnoreCase(String ten);
 
     @Query("SELECT s FROM Student s WHERE LOWER(s.thanhPho) LIKE LOWER(CONCAT('%',:name,'%'))")
@@ -25,8 +26,23 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     @Query("SELECT s FROM Student s WHERE YEAR(s.ngaySinh) BETWEEN :nam1 AND :nam2")
     List<Student> findByNgaySinhBetween(int nam1, int nam2);
 
-    @Query("SELECT s FROM Student s WHERE s.xepLoai LIKE CONCAT('%',:xepLoai,'%')")
-    List<Student> findByXepLoai(XepLoai xepLoai);
+    @Query("SELECT s FROM Student s WHERE" +
+            "(:xepLoai IS NULL OR s.xepLoai = :xepLoai) AND" +
+            "(:ten IS NULL OR s.ten like %:ten%) AND" +
+            "(:thanhPho IS NULL OR s.thanhPho LIKE %:thanhPho%) AND" +
+            "(:startYear IS NULL OR YEAR(s.ngaySinh) >= :startYear) AND" +
+            "(:endYear IS NULL OR YEAR(s.ngaySinh) <= :endYear)")
+    List<Student> search(
+            @Param("xepLoai") XepLoai xepLoai,
+            @Param("ten") String ten,
+            @Param("thanhPho") String thanhPho,
+            @Param("startYear") int startYear,
+            @Param("endYear") int endYear
+    );
+
+
+
+
 
 
 }

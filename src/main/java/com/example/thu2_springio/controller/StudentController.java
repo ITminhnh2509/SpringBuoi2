@@ -1,7 +1,9 @@
 package com.example.thu2_springio.controller;
 
 import com.example.thu2_springio.dto.StudentDTO;
+import com.example.thu2_springio.dto.StudentImageDTO;
 import com.example.thu2_springio.model.Student;
+import com.example.thu2_springio.model.StudentImage;
 import com.example.thu2_springio.model.XepLoai;
 import com.example.thu2_springio.response.ApiResponse;
 import com.example.thu2_springio.response.StudentListResponse;
@@ -14,11 +16,20 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.multipart.MultipartFile;
+import ch.qos.logback.core.util.StringUtil;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("api/v1/student")
@@ -204,5 +215,61 @@ public class StudentController {
                 .build();
         return ResponseEntity.ok().body(apiResponse);
     }
+    @GetMapping("/getallimage/{id}")
+    public ResponseEntity<?> getAllImage(@PathVariable("id") Long id){
+       ApiResponse apiResponse = ApiResponse
+               .builder()
+               .data(service.getAllStudentImages(id))
+               .message("search successful")
+               .status(HttpStatus.OK.value())
+               .build();
+               return ResponseEntity.ok().body(apiResponse);
+    }
 
+    @GetMapping(value = "/upload/{id}")
+    public ResponseEntity<?> uploadStudentImage(@PathVariable("id") Long id, @ModelAttribute("files")List<MultipartFile> files) throws IOException
+    {
+//        String fileName =storeFile(files);
+//        StudentImageDTO studentImageDTO = StudentImageDTO
+//                .builder()
+//                .imageUrl(fileName)
+//                .build();
+        List<StudentImage> studentImages = new ArrayList<>();
+        int count= 0;
+        for(MultipartFile file : files){
+            if(file!=null){
+                if(file.getSize()==0){
+                    count++;
+                    continue;
+                }
+                String fileName =storeFile(file);
+                StudentImageDTO studentImageD = StudentImageDTO.builder().imageUrl(fileName).build();
+                StudentImage studentImage = service.saveStudentImage(id,studentImageD);
+                studentImages.add(studentImage);
+            }
+        }
+        if(count==1){
+            throw new IllegalArgumentException("Files chưa chọn");
+        }
+
+        ApiResponse apiResponse = ApiResponse
+                .builder()
+                .message("upload successful")
+                .data(studentImages)
+                .build();
+        return ResponseEntity.ok().body(apiResponse);
+    }
+
+    private String storeFile(MultipartFile file) throws IOException{
+        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        String uniqueFilename = UUID.randomUUID().toString() + "_" + fileName;
+
+        java.nio.file.Path updaloadDir = Paths.get("upload");
+        if(!Files.exists(updaloadDir)){
+            Files.createDirectory(updaloadDir);
+        }
+        java.nio.file.Path destination = Paths.get(updaloadDir.toString(),uniqueFilename);
+        Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
+        return uniqueFilename;
+    }
 }

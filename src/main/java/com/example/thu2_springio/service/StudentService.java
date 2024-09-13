@@ -1,8 +1,11 @@
 package com.example.thu2_springio.service;
 
 import com.example.thu2_springio.dto.StudentDTO;
+import com.example.thu2_springio.dto.StudentImageDTO;
 import com.example.thu2_springio.model.Student;
+import com.example.thu2_springio.model.StudentImage;
 import com.example.thu2_springio.model.XepLoai;
+import com.example.thu2_springio.repository.StudentImageRepository;
 import com.example.thu2_springio.repository.StudentRepository;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -11,12 +14,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.security.InvalidParameterException;
 import java.util.Date;
 import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class StudentService implements ServiceBasic{
-
+    private final StudentImageRepository studentImageRepository;
     private final StudentRepository repository;
 
     @Override
@@ -89,6 +93,26 @@ public class StudentService implements ServiceBasic{
     @Override
     public List<Student> searchStudents(XepLoai xepLoai, String ten, String thanhPho, int startYear, int endYear) {
         return repository.search(xepLoai, ten, thanhPho, startYear, endYear);
+    }
+
+    @Override
+    public List<StudentImage> getAllStudentImages(Long id) {
+        return studentImageRepository.findByStudentId(id);
+
+    }
+    @Override
+    public StudentImage saveStudentImage(Long id, StudentImageDTO studentImageDTO) {
+        Student student = getStudentById(id);
+        StudentImage studentImage = StudentImage
+                .builder()
+                .student(student)
+                .imageUrl(studentImageDTO.getImageUrl())
+                .build();
+        int size = studentImageRepository.findByStudentId(id).size();
+        if (size >= 4){
+            throw new InvalidParameterException("Mỗi sinh viên chỉ được 4 hnh");
+        }
+        return studentImageRepository.save(studentImage);
     }
 
 

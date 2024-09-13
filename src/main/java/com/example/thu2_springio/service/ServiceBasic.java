@@ -1,7 +1,9 @@
 package com.example.thu2_springio.service;
 
 import com.example.thu2_springio.dto.StudentDTO;
+import com.example.thu2_springio.dto.StudentImageDTO;
 import com.example.thu2_springio.model.Student;
+import com.example.thu2_springio.model.StudentImage;
 import com.example.thu2_springio.model.XepLoai;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,5 +34,7 @@ public interface ServiceBasic {
             XepLoai xepLoai, String ten, String thanhPho,
             int startYear,int endYear
     );
+    List<StudentImage> getAllStudentImages(Long id);
+    StudentImage saveStudentImage(Long id, StudentImageDTO studentImageDTO);
 }
 

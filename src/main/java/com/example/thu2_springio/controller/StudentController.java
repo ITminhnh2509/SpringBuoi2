@@ -11,10 +11,12 @@ import com.example.thu2_springio.service.StudentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ch.qos.logback.core.util.StringUtil;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -220,13 +223,33 @@ public class StudentController {
        ApiResponse apiResponse = ApiResponse
                .builder()
                .data(service.getAllStudentImages(id))
-               .message("search successful")
+               .message("(*/ω＼*)")
                .status(HttpStatus.OK.value())
                .build();
                return ResponseEntity.ok().body(apiResponse);
     }
-
-    @GetMapping(value = "/upload/{id}")
+    @DeleteMapping("/getallimage/delete/{id}")
+    public ResponseEntity<?> deleteStudentiMAGE(@PathVariable("id") Long id){
+        StudentImage student = service.getStudentImage(id);
+        if(student == null){
+            ApiResponse apiResponse = ApiResponse
+                    .builder()
+                    .data(id)
+                    .message("Student not found")
+                    .status(HttpStatus.NOT_FOUND.value())
+                    .build();
+            return ResponseEntity.badRequest().body(apiResponse);
+        }
+        service.removeStudentImage(id);
+        ApiResponse apiResponse = ApiResponse
+                .builder()
+                .data(id)
+                .message("delete successfully")
+                .status(HttpStatus.OK.value())
+                .build();
+        return ResponseEntity.ok(apiResponse);
+    }
+    @PostMapping(value = "/upload/{id}")
     public ResponseEntity<?> uploadStudentImage(@PathVariable("id") Long id, @ModelAttribute("files")List<MultipartFile> files) throws IOException
     {
 //        String fileName =storeFile(files);
@@ -271,5 +294,25 @@ public class StudentController {
         java.nio.file.Path destination = Paths.get(updaloadDir.toString(),uniqueFilename);
         Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
         return uniqueFilename;
+    }
+
+    @GetMapping("images/{imagesName}")
+    public ResponseEntity<?> viewImage(@PathVariable("imagesName") String imagesName){
+        try {
+            java.nio.file.Path imagePath = Paths.get("upload/" + imagesName);
+            UrlResource urlResource = new UrlResource(imagePath.toUri());
+            if(urlResource.exists()){
+                return ResponseEntity.ok()
+                        .contentType(MediaType.IMAGE_JPEG)
+                        .body(urlResource);
+            }
+            else {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.IMAGE_JPEG)
+                        .body(new UrlResource(Paths.get("upload/notfound.jpeg").toUri()));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

@@ -36,5 +36,7 @@ public interface ServiceBasic {
     );
     List<StudentImage> getAllStudentImages(Long id);
     StudentImage saveStudentImage(Long id, StudentImageDTO studentImageDTO);
+    void removeStudentImage(Long id);
+    StudentImage getStudentImage(Long id);
 }
 

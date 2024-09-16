@@ -115,5 +115,15 @@ public class StudentService implements ServiceBasic{
         return studentImageRepository.save(studentImage);
     }
 
+    @Override
+    public void removeStudentImage(Long id) {
+        studentImageRepository.deleteById(id);
+    }
+
+    @Override
+    public StudentImage getStudentImage(Long id) {
+        return studentImageRepository.findById(id).orElse(null);
+    }
+
 
 }
